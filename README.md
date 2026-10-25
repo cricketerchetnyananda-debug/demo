@@ -51,6 +51,22 @@ Prerequisites: Node.js 20+ and PostgreSQL 14+.
    ```
 4. Open http://localhost:4200, click **Register a new account** — the first user is the admin.
 
+## Production (one server)
+
+`npm run build` in the repo root builds both parts; `npm start` then serves the API **and** the web pages
+on one port (default 3000). Set `DATABASE_URL` (plus `DB_SSL=true` if the database needs SSL) and `JWT_SECRET`.
+
+## Deploy on Render (public https link)
+
+1. Create a free account at https://render.com and sign in with GitHub.
+2. **New → Blueprint**, choose this repository, click **Apply**.
+   `render.yaml` creates the web service and a PostgreSQL database and wires them together.
+3. Wait for the first deploy (about 5 minutes), then open the `https://school-attendance-xxxx.onrender.com` link
+   in Chrome or Safari and register — the first account becomes the admin.
+
+Free-plan notes: the web service sleeps after ~15 minutes idle (first visit then takes ~1 minute),
+and Render's free PostgreSQL expires after 30 days — upgrade the database plan to keep data.
+
 ## API overview (all under `/api`)
 
 | Method | Path | Notes |

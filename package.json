@@ -1,0 +1,13 @@
+{
+  "name": "school-attendance",
+  "version": "1.0.0",
+  "description": "School attendance (grades 1-10): Angular SPA served by a NestJS API on PostgreSQL",
+  "private": true,
+  "scripts": {
+    "build": "npm ci --prefix frontend --include=dev && npm ci --prefix backend --include=dev && npm run build --prefix frontend && npm run build --prefix backend",
+    "start": "npm run start:prod --prefix backend"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

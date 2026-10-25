@@ -14,6 +14,7 @@ import { SeedService } from './common/seed.service';
 import { CorrectionsController } from './corrections/corrections.controller';
 import { CorrectionsService } from './corrections/corrections.service';
 import { ENTITIES } from './entities';
+import { HealthController } from './health.controller';
 import { UsersController } from './users/users.controller';
 
 @Module({
@@ -21,16 +22,26 @@ import { UsersController } from './users/users.controller';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get('DB_HOST', 'localhost'),
-        port: Number(config.get('DB_PORT', 5432)),
-        username: config.getOrThrow('DB_USER'),
-        password: config.getOrThrow('DB_PASSWORD'),
-        database: config.getOrThrow('DB_NAME'),
-        entities: ENTITIES,
-        synchronize: config.get('DB_SYNC', 'true') === 'true',
-      }),
+      useFactory: (config: ConfigService) => {
+        // Hosting platforms provide one DATABASE_URL; local development uses the separate DB_* settings.
+        const url = config.get<string>('DATABASE_URL');
+        const connection = url
+          ? { url }
+          : {
+              host: config.get('DB_HOST', 'localhost'),
+              port: Number(config.get('DB_PORT', 5432)),
+              username: config.getOrThrow<string>('DB_USER'),
+              password: config.getOrThrow<string>('DB_PASSWORD'),
+              database: config.getOrThrow<string>('DB_NAME'),
+            };
+        return {
+          type: 'postgres' as const,
+          ...connection,
+          ssl: config.get('DB_SSL') === 'true' ? { rejectUnauthorized: false } : false,
+          entities: ENTITIES,
+          synchronize: config.get('DB_SYNC', 'true') === 'true',
+        };
+      },
     }),
     TypeOrmModule.forFeature(ENTITIES),
     JwtModule.registerAsync({
@@ -42,7 +53,7 @@ import { UsersController } from './users/users.controller';
       }),
     }),
   ],
-  controllers: [AuthController, UsersController, ClassesController, AttendanceController, CorrectionsController],
+  controllers: [HealthController, AuthController, UsersController, ClassesController, AttendanceController, CorrectionsController],
   providers: [
     { provide: APP_GUARD, useClass: AuthGuard },
     AuthService,
