@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.angular/
+out-tsc/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+*.log
+.vscode/
+.idea/
+.claude/
