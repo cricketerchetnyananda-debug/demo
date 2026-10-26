@@ -51,6 +51,29 @@ Prerequisites: Node.js 20+ and PostgreSQL 14+.
    ```
 4. Open http://localhost:4200, click **Register a new account** — the first user is the admin.
 
+## Testing
+
+- Test case catalog: [docs/test-cases.md](docs/test-cases.md) — `TC-*` API cases and `UI-*` browser checks.
+- Automated end-to-end tests: `npm run test:e2e` (root). Needs a **separate** test database:
+  ```sql
+  CREATE DATABASE school_attendance_test OWNER attendance_app;
+  ```
+  and `backend/.env.test` containing
+  `TEST_DATABASE_URL=postgres://attendance_app:<password>@localhost:5432/school_attendance_test`.
+  The suite wipes that database on every run (it refuses to run on a database whose name lacks "test").
+
+## Claude Code agents
+
+Defined in `.claude/agents/` (project guide for all of them: `CLAUDE.md`):
+
+| Agent | Use it for |
+|---|---|
+| `feature-developer` | New features end to end: entity → API → Angular page → test cases → e2e tests → docs |
+| `bug-fixer` | Reproduce with a failing test, fix the root cause, keep the regression test |
+| `qa-tester` | Full start-to-end test run (build, `test:e2e`, `UI-*` browser checks), writes new test cases, reports bugs |
+
+Example: *"Use the feature-developer agent to add a monthly attendance report per class."*
+
 ## Production (one server)
 
 `npm run build` in the repo root builds both parts; `npm start` then serves the API **and** the web pages

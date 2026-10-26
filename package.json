@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "build": "npm ci --prefix frontend --include=dev && npm ci --prefix backend --include=dev && npm run build --prefix frontend && npm run build --prefix backend",
-    "start": "npm run start:prod --prefix backend"
+    "start": "npm run start:prod --prefix backend",
+    "test:e2e": "npm run build --prefix backend && node --test --test-concurrency=1 \"tests/e2e/*.test.mjs\""
   },
   "engines": {
     "node": ">=20"
